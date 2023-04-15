@@ -28,7 +28,7 @@ export const ViewOrders = props => {
   const [searchOrder, setSearchOrder] = useState('');
   const [shopOrderDetails, setShopOrderDetails] = useState();
   const [shop, setShop] = useState();
-
+  const [cancelOrderNo, setCancelOrderNo] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [cancelModal, setCancelModal] = useState(false);
   const [checked, setChecked] = useState();
@@ -77,10 +77,14 @@ export const ViewOrders = props => {
     // console.log(selectFilteredShop,'selectFilteredShop')
     // console.log(selectedShopOrders,'selectedShopOrders')
   };
-
-  const handleCancelOrder = value => {
-    console.log(value,'btn pressed');
-    dispatch(DeleteOrderDetails(value));
+  const handleCancelBtn = orderNo => {
+    console.log(orderNo, 'btn pressed');
+    setCancelOrderNo(orderNo);
+    setCancelModal(true);
+  };
+  const handleCancelOrder = () => {
+    // console.log(value,'btn pressed');
+    dispatch(DeleteOrderDetails(cancelOrderNo));
     setCancelModal(false);
   };
 
@@ -161,7 +165,7 @@ export const ViewOrders = props => {
                   mode={'outlined'}
                   text={'Cancel Order'}
                   textColor={'#FF8400'}
-                  onPress={() => setCancelModal(true)}
+                  onPress={() => handleCancelBtn(val.order_number)}
                 />
               </View>
               <View>
@@ -283,8 +287,8 @@ export const ViewOrders = props => {
                             onValueChange={value => setChecked(value)}
                             value={checked}>
                             <RadioButton.Item label="First" value="first" />
-                            {/* <RadioButton.Item label="Second" value="second" />
-                            <RadioButton.Item label="Third" value="third" /> */}
+                            <RadioButton.Item label="Second" value="second" />
+                            <RadioButton.Item label="Third" value="third" />
                           </RadioButton.Group>
                         </View>
                         <View style={styles.cancelWrap}>
