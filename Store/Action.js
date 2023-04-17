@@ -4,6 +4,8 @@ import {
   UPDATE_ORDER_DETAILS,
   ORDER_CONDITION,
   DELETE_ORDER,
+  CANCELLED_ORDERS,
+  CANCELLED_ORDER_DETAILS,
 } from './Types';
 
 export const UpdateLogin = loginDetails => {
@@ -21,7 +23,7 @@ export const UpdateShopDetails = shopDetails => {
 };
 
 export const UpdateOrderDetails = orderDetails => {
-  console.log(orderDetails,'Action')
+  console.log(orderDetails, 'Action');
   return {
     type: UPDATE_ORDER_DETAILS,
     data: orderDetails,
@@ -39,5 +41,18 @@ export const OrderCheck = order => {
   return {
     type: ORDER_CONDITION,
     check: order,
+  };
+};
+
+export const NoOfOrdersCancelled = () => {
+  return {
+    type: CANCELLED_ORDERS,
+  };
+};
+
+export const UpdateCancelOrder = (cancelOrder) => {
+  return {
+    type:CANCELLED_ORDER_DETAILS,
+    data:cancelOrder,
   };
 };

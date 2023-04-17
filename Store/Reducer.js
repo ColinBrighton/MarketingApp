@@ -5,6 +5,8 @@ import {
   UPDATE_SHOP_DETAILS,
   ORDER_CONDITION,
   DELETE_ORDER,
+  CANCELLED_ORDERS,
+  CANCELLED_ORDER_DETAILS,
 } from './Types';
 
 const InitialState = {
@@ -12,6 +14,8 @@ const InitialState = {
   ShopDetails: [], //details about the shop
   OrderDetails: [], //order details for the shop
   OrderCondition: false,
+  CancelledOrders: 0, //no of orders cancelled
+  CancelledOrderDetails: [],// cancelled order details
 };
 
 export const Reducer = (state = InitialState, action) => {
@@ -42,6 +46,16 @@ export const Reducer = (state = InitialState, action) => {
         OrderDetails: state.OrderDetails.filter(
           val => val.order_number !== action.data,
         ),
+      };
+    case CANCELLED_ORDERS:
+      return {
+        ...state,
+        CancelledOrders: state.CancelledOrders + 1,
+      };
+    case CANCELLED_ORDER_DETAILS:
+      return {
+        ...state,
+        CancelledOrderDetails: [...state.CancelledOrderDetails, action.data],
       };
     default:
       break;

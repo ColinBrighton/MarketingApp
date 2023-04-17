@@ -83,7 +83,7 @@ export const DrawerNavigation = () => {
       />
       <Drawer.Screen
         name="View Orders"
-        component={OrderStackNavigation}
+        component={ViewOrders}
         options={{
           drawerIcon: () => (
             <Image source={require('../Images/Drawer/view.png')}/>

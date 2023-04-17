@@ -19,6 +19,8 @@ import {Searchbar} from 'react-native-paper';
 import {RadioButton} from 'react-native-paper';
 import {Table, Row, Rows} from 'react-native-table-component';
 import {DeleteOrderDetails} from '../../Store/Action';
+import {NoOfOrdersCancelled} from '../../Store/Action';
+import {UpdateCancelOrder} from '../../Store/Action';
 
 const {width, height} = Dimensions.get('window');
 
@@ -31,8 +33,10 @@ export const ViewOrders = props => {
   const [cancelOrderNo, setCancelOrderNo] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [cancelModal, setCancelModal] = useState(false);
-  const [checked, setChecked] = useState();
-
+  const [checked, setChecked] = useState(null);
+  const [cancelledShop, setCancelledShop] = useState(null);
+  const [cancelledOrderId, setCancelledOrderId] = useState(null);
+  const [modalData, setModalData] = useState();
   const dispatch = useDispatch();
 
   const tableHeader = ['Product', 'Variant', 'Quantity'];
@@ -77,21 +81,38 @@ export const ViewOrders = props => {
     // console.log(selectFilteredShop,'selectFilteredShop')
     // console.log(selectedShopOrders,'selectedShopOrders')
   };
-  const handleCancelBtn = orderNo => {
-    console.log(orderNo, 'btn pressed');
+  const handleCancelBtn = (orderNo, shop) => {
+    setChecked(null);
+    console.log(orderNo, shop, 'btn pressed');
+    const key = 0;
+    const values = [{keys: key + 1, order_no: orderNo, shop: shop}];
+    setModalData(values);
+    setCancelledOrderId(orderNo);
+    setCancelledShop(shop);
     setCancelOrderNo(orderNo);
     setCancelModal(true);
   };
+  console.log(cancelOrderNo, 'cancelOrderNo');
+  console.log(cancelledShop, 'cancelledShop');
   const handleCancelOrder = () => {
-    // console.log(value,'btn pressed');
+    const values = {
+      cancelled_shop: cancelledShop,
+      cancelled_order_id: cancelledOrderId,
+      reason: checked,
+    };
     dispatch(DeleteOrderDetails(cancelOrderNo));
+    dispatch(NoOfOrdersCancelled());
+    dispatch(UpdateCancelOrder(values));
     setCancelModal(false);
+    // console.log(cancelledShop,'cancelledShop');
+    // console.log(cancelledOrderId,'cancelledOrderId');
+    // console.log('Reason to Cancel Order :', checked);
   };
 
   // console.log(orderList, 'redux data');
   // console.log(shopOrderDetails, 'shopOrderDetails');
-  console.log(OrderDetails, 'OrderDetails');
-  console.log(orderList, 'orderList');
+  // console.log(OrderDetails, 'OrderDetails');
+  // console.log(orderList, 'orderList');
   // console.log(shop, 'shop data');
   if (OrderDetails == '') {
     return (
@@ -165,7 +186,9 @@ export const ViewOrders = props => {
                   mode={'outlined'}
                   text={'Cancel Order'}
                   textColor={'#FF8400'}
-                  onPress={() => handleCancelBtn(val.order_number)}
+                  onPress={() =>
+                    handleCancelBtn(val.order_number, val.selected_shop)
+                  }
                 />
               </View>
               <View>
@@ -183,7 +206,9 @@ export const ViewOrders = props => {
                         </TouchableOpacity>
                         <Text style={styles.headText}>Order Details</Text>
                       </View>
-
+                      <Text style={styles.orderheadText}>
+                        The Order Details are as Follows:
+                      </Text>
                       <View>
                         {shop?.map(param => (
                           <View key={param.shop_name}>
@@ -241,20 +266,6 @@ export const ViewOrders = props => {
                                 </Text>
                               </View>
                             ))}
-                            {/* <View style={styles.tablecontainer}>
-                              <Table borderStyle={styles.tableborder}>
-                                <Row
-                                  data={tableHeader}
-                                  style={styles.tableheader}
-                                  textStyle={{
-                                    textAlign: 'center',
-                                    fontWeight: 'bold',
-                                    color: 'black',
-                                  }}
-                                />
-                                <Rows data={tabledata} />
-                              </Table>
-                            </View> */}
                             <View style={styles.modalbtnwrap}>
                               <ButtonComp
                                 style={styles.modalbtn}
@@ -280,15 +291,42 @@ export const ViewOrders = props => {
                     <View style={styles.modal}>
                       <View style={styles.modalcontainer}>
                         <Text style={styles.modalHeadText}>
-                          Select a Reason to Cancel
+                          Cancel The Order
+                        </Text>
+                        <View>
+                          {modalData?.map(www => (
+                            <View key={www.keys} style={styles.modaltextwrap}>
+                              <Text style={styles.modalsideHead}>
+                                Selected Shop :
+                              </Text>
+                              <Text style={styles.modaltext}>
+                                Order Id : {www.order_no}
+                              </Text>
+                              <Text style={styles.modaltext}>
+                                Shop Name : {www.shop}
+                              </Text>
+                            </View>
+                          ))}
+                        </View>
+                        <Text style={styles.modalsideHead}>
+                          Select a reason to cancel :
                         </Text>
                         <View style={styles.radiogroup}>
                           <RadioButton.Group
                             onValueChange={value => setChecked(value)}
                             value={checked}>
-                            <RadioButton.Item label="First" value="first" />
-                            <RadioButton.Item label="Second" value="second" />
-                            <RadioButton.Item label="Third" value="third" />
+                            <RadioButton.Item
+                              label="Reason 1"
+                              value="Reason 1"
+                            />
+                            <RadioButton.Item
+                              label="Reason 2"
+                              value="Reason 2"
+                            />
+                            <RadioButton.Item
+                              label="Reason 3"
+                              value="Reason 3"
+                            />
                           </RadioButton.Group>
                         </View>
                         <View style={styles.cancelWrap}>
@@ -461,8 +499,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#00000070',
   },
   modal: {
-    width: 300,
-    height: 300,
+    width: 350,
+    height: 450,
     backgroundColor: 'white',
     // borderRadius:20,
     borderWidth: 1,
@@ -476,13 +514,22 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
-    // backgroundColor:'red',
+    letterSpacing: 1,
     marginTop: 15,
     color: 'black',
+ 
+  },
+  orderheadText: {
+    fontSize: 17,
+    fontWeight: 'bold',
+    textDecorationLine: 'underline',
+    marginLeft:8,
+    textDecorationLine:'underline',
+    color:'black',
   },
   radiogroup: {
     // backgroundColor:'red',
-    marginTop: 10,
+
     marginBottom: 20,
   },
   cancelWrap: {
@@ -490,5 +537,22 @@ const styles = StyleSheet.create({
   },
   cancelOrderbtn: {
     backgroundColor: 'orange',
+  },
+  modaltextwrap: {
+    // backgroundColor: 'red',
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  modalsideHead: {
+    color: 'black',
+    fontSize: 16,
+    fontWeight: 'bold',
+    paddingVertical: 5,
+    marginLeft: 20,
+    textDecorationLine: 'underline',
+  },
+  modaltext: {
+    color: 'black',
+    marginLeft: 30,
   },
 });

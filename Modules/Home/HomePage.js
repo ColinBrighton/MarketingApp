@@ -7,13 +7,19 @@ import {
   Image,
   Dimensions,
   ScrollView,
+  TouchableOpacity
 } from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 import {ButtonComp} from '../../Components/Button';
 import {IconComp} from '../../Components/Icon';
+import {useSelector} from 'react-redux';
 
 const {width, height} = Dimensions.get('window');
 export const HomePage = props => {
+  const CancelledOrders = useSelector(state => state.CancelledOrders);
+  const CancelledOrderDetails = useSelector(
+    state => state.CancelledOrderDetails,
+  );
+  console.log(CancelledOrderDetails, 'CancelledOrderDetails');
   return (
     <ImageBackground
       source={require('../../Images/homePage/homebg.jpg')}
@@ -42,7 +48,7 @@ export const HomePage = props => {
             />
           </TouchableOpacity>
           <Text style={styles.headText}>Home</Text>
-        {/* <IconComp/> */}
+          {/* <IconComp/> */}
         </View>
 
         <View style={styles.cardWrap}>
@@ -118,7 +124,7 @@ export const HomePage = props => {
             </View>
             <Text style={styles.cardHead}>Cancelled Orders</Text>
             <View style={styles.text}>
-              <Text style={styles.text1}>5</Text>
+              <Text style={styles.text1}>{CancelledOrders}</Text>
             </View>
             <View style={styles.btnWrap}>
               <ButtonComp
@@ -234,11 +240,11 @@ const styles = StyleSheet.create({
     height: 40,
     width: 250,
   },
-  text1:{
+  text1: {
     color: '#150E56',
-    paddingLeft:20,
-    marginTop:10,
-    fontSize:15,
-    fontWeight:'bold'
-  }
+    paddingLeft: 20,
+    marginTop: 10,
+    fontSize: 15,
+    fontWeight: 'bold',
+  },
 });
