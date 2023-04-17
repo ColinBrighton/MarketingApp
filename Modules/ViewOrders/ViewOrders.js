@@ -33,6 +33,7 @@ export const ViewOrders = props => {
   const [cancelOrderNo, setCancelOrderNo] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [cancelModal, setCancelModal] = useState(false);
+  const [addModal, setAddModal] = useState(false);
   const [checked, setChecked] = useState(null);
   const [cancelledShop, setCancelledShop] = useState(null);
   const [cancelledOrderId, setCancelledOrderId] = useState(null);
@@ -43,9 +44,9 @@ export const ViewOrders = props => {
 
   const tabledata = orderList.map(vals => {
     const table = [];
-    vals.product.map(vvv => {
-      table.push(vvv.selectedProduct, vvv.selectedVariant, vvv.Quantity);
-    });
+    // vals.product.map(vvv => {
+    //   table.push(vvv.selectedProduct, vvv.selectedVariant, vvv.Quantity);
+    // });
     return table;
   });
   // console.log(tabledata, 'tabledata');
@@ -103,15 +104,20 @@ export const ViewOrders = props => {
     dispatch(DeleteOrderDetails(cancelOrderNo));
     dispatch(NoOfOrdersCancelled());
     dispatch(UpdateCancelOrder(values));
+
     setCancelModal(false);
     // console.log(cancelledShop,'cancelledShop');
     // console.log(cancelledOrderId,'cancelledOrderId');
     // console.log('Reason to Cancel Order :', checked);
   };
 
+  const handleAddMore = () => {
+    setAddModal(true);
+  };
+
   // console.log(orderList, 'redux data');
   // console.log(shopOrderDetails, 'shopOrderDetails');
-  // console.log(OrderDetails, 'OrderDetails');
+  console.log(OrderDetails, 'OrderDetails');
   // console.log(orderList, 'orderList');
   // console.log(shop, 'shop data');
   if (OrderDetails == '') {
@@ -167,12 +173,17 @@ export const ViewOrders = props => {
         </View>
         <View>
           {orderList.map(val => (
-            <View style={styles.cardContainer} key={val.order_number}>
+            <View style={styles.cardContainer} key={val.key}>
               <View style={styles.textWrap}>
                 <Text style={styles.text}>OrderID : {val.order_number}</Text>
                 <Text style={styles.text}>Shop Name : {val.selected_shop}</Text>
                 <Text style={styles.text}>Order Date : {val.order_date}</Text>
               </View>
+              <TouchableOpacity
+                style={styles.add}
+                onPress={() => handleAddMore()}>
+                <Text style={styles.addText}>Add</Text>
+              </TouchableOpacity>
               <View style={styles.btnWrap}>
                 <ButtonComp
                   style={styles.cardBtn}
@@ -184,13 +195,14 @@ export const ViewOrders = props => {
                 <ButtonComp
                   style={styles.cardBtn1}
                   mode={'outlined'}
-                  text={'Cancel Order'}
+                  text={'Cancel'}
                   textColor={'#FF8400'}
                   onPress={() =>
                     handleCancelBtn(val.order_number, val.selected_shop)
                   }
                 />
               </View>
+              {/* view modal */}
               <View>
                 <Modal visible={openModal}>
                   <View style={styles.modalwrap}>
@@ -282,6 +294,7 @@ export const ViewOrders = props => {
                   </View>
                 </Modal>
               </View>
+              {/* cancel  modal */}
               <View>
                 <Modal
                   visible={cancelModal}
@@ -341,6 +354,32 @@ export const ViewOrders = props => {
                         </View>
                       </View>
                     </View>
+                  </View>
+                </Modal>
+              </View>
+              {/* Add modal */}
+              <View>
+                <Modal visible={addModal}>
+                  <View style={styles.modalwrap}>
+                    <ScrollView contentContainerStyle={{flexGrow: 1}}>
+                      <View style={styles.headTextWrap}>
+                        <TouchableOpacity
+                          activeOpacity={0.5}
+                          onPress={() => setAddModal(false)}>
+                          <Image
+                            source={require('../../Images/backarrow.png')}
+                            style={{height: 40, width: 40, marginLeft: 10}}
+                          />
+                        </TouchableOpacity>
+                        <Text style={styles.headText}>Add</Text>
+                      </View>
+                      <Text style={styles.orderheadText}>
+                        Add More Products:
+                      </Text>
+                      <View>
+                        
+                      </View>
+                    </ScrollView>
                   </View>
                 </Modal>
               </View>
@@ -517,15 +556,14 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     marginTop: 15,
     color: 'black',
- 
   },
   orderheadText: {
     fontSize: 17,
     fontWeight: 'bold',
     textDecorationLine: 'underline',
-    marginLeft:8,
-    textDecorationLine:'underline',
-    color:'black',
+    marginLeft: 8,
+    textDecorationLine: 'underline',
+    color: 'black',
   },
   radiogroup: {
     // backgroundColor:'red',
@@ -554,5 +592,24 @@ const styles = StyleSheet.create({
   modaltext: {
     color: 'black',
     marginLeft: 30,
+  },
+  add: {
+    position: 'absolute',
+    backgroundColor: '#FF8400',
+    right: 0,
+    borderTopRightRadius: 10,
+    // right:20 ,
+    paddingBottom: 20,
+    paddingLeft: 20,
+    paddingTop: 5,
+    paddingRight: 5,
+    borderBottomLeftRadius: 50,
+  },
+  addText: {
+    fontSize: 20,
+    color: 'white',
+    fontWeight: 'bold',
+    paddingRight: 3,
+    // transform: [{ rotate: '40deg' }],
   },
 });

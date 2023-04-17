@@ -5,3 +5,5 @@ export const ORDER_CONDITION='order_condition'
 export const DELETE_ORDER='delete_order'
 export const CANCELLED_ORDERS='cancelled_orders'
 export const CANCELLED_ORDER_DETAILS='cancelled_order_details'
+export const SET_PENDING_ORDER = 'set_pending_order';
+export const ADD_MORE_ORDER = 'add_more_order'

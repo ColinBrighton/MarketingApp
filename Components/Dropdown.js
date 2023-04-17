@@ -14,6 +14,7 @@ export const DropdownComp = ({
   searchPlaceHolder,
   searchPlaceHolderColor,
   rowstyle,
+  disabled,
   value
 }) => {
   return (
@@ -32,6 +33,7 @@ export const DropdownComp = ({
       buttonStyle={buttonstyle}
       buttonTextStyle={buttonTextStyle}
       dropdownIconPosition='right'
+      disabled={disabled}
     />
   );
 };

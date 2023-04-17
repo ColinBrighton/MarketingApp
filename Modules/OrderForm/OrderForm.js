@@ -26,6 +26,8 @@ import {TableComp} from '../../Components/Table';
 import {COL_TYPES} from 'react-native-datatable-component';
 import {UpdateOrderDetails} from '../../Store/Action';
 import {useIsFocused} from '@react-navigation/native';
+import { SetPendingOrder } from '../../Store/Action';
+import { AddMoreOrder } from '../../Store/Action';
 
 const {width, height} = Dimensions.get('window');
 
@@ -54,6 +56,8 @@ export const OrderForm = props => {
   const month = ('0' + (currentDate.getMonth() + 1)).slice(-2);
   const date = ('0' + currentDate.getDate()).slice(-2);
   const formattedDate = year + '/' + month + '/' + date;
+
+  // const PendingOrderStatus = useSelector(state => state.PendingOrder);
 
   const colSettings = [
     
@@ -111,6 +115,8 @@ export const OrderForm = props => {
       setOrderNumber(orderNumber + 1);
       // console.log(values, 'sending values to redux');
       dispatch(UpdateOrderDetails(values));
+      dispatch(SetPendingOrder(orderNumber));
+      // dispatch(AddMoreOrder('ppp','vvv',2))
       props.navigation.navigate('Home');
     }
   };
@@ -212,6 +218,7 @@ export const OrderForm = props => {
                   <DropdownComp
                     data={ShopNames}
                     search={true}
+                    disabled={selectedShop === null ? false : true}
                     defaultBtnText={'Select Shop'}
                     searchPlaceHolder={'Search here...'}
                     searchPlaceHolderColor="#FF8400"

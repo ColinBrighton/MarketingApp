@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   UPDATE_LOGIN,
   UPDATE_ORDER_DETAILS,
@@ -7,6 +6,8 @@ import {
   DELETE_ORDER,
   CANCELLED_ORDERS,
   CANCELLED_ORDER_DETAILS,
+  SET_PENDING_ORDER,
+  ADD_MORE_ORDER
 } from './Types';
 
 const InitialState = {
@@ -15,7 +16,8 @@ const InitialState = {
   OrderDetails: [], //order details for the shop
   OrderCondition: false,
   CancelledOrders: 0, //no of orders cancelled
-  CancelledOrderDetails: [],// cancelled order details
+  CancelledOrderDetails: [], // cancelled order details
+  PendingOrder: [], // Pending order Details
 };
 
 export const Reducer = (state = InitialState, action) => {
@@ -56,6 +58,27 @@ export const Reducer = (state = InitialState, action) => {
       return {
         ...state,
         CancelledOrderDetails: [...state.CancelledOrderDetails, action.data],
+      };
+    case SET_PENDING_ORDER:
+      const updatedOrders = state.OrderDetails.map(order => {
+        if (order.order_number === action.data) {
+          return {...order, status: 'pending'};
+        } else {
+          return order;
+        }
+      });
+      return {...state, PendingOrder: updatedOrders};
+    case ADD_MORE_ORDER:
+      return {
+        ...state,
+        OrderDetails: [
+          ...state.OrderDetails,
+          {
+            selectedProduct: action.data.product,
+            selectedVariant: action.data.variant,
+            Quantity: action.data.quantity,
+          },
+        ],
       };
     default:
       break;

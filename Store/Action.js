@@ -6,6 +6,8 @@ import {
   DELETE_ORDER,
   CANCELLED_ORDERS,
   CANCELLED_ORDER_DETAILS,
+  SET_PENDING_ORDER,
+  ADD_MORE_ORDER,
 } from './Types';
 
 export const UpdateLogin = loginDetails => {
@@ -50,9 +52,27 @@ export const NoOfOrdersCancelled = () => {
   };
 };
 
-export const UpdateCancelOrder = (cancelOrder) => {
+export const UpdateCancelOrder = cancelOrder => {
   return {
-    type:CANCELLED_ORDER_DETAILS,
-    data:cancelOrder,
+    type: CANCELLED_ORDER_DETAILS,
+    data: cancelOrder,
+  };
+};
+
+export const SetPendingOrder = orderId => {
+  return {
+    type: SET_PENDING_ORDER,
+    data: orderId,
+  };
+};
+
+export const AddMoreOrder = (product, variant, quantity) => {
+  return {
+    type: ADD_MORE_ORDER,
+    data: {
+      product,
+      variant,
+      quantity,
+    },
   };
 };

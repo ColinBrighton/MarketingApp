@@ -15,11 +15,14 @@ import {useSelector} from 'react-redux';
 
 const {width, height} = Dimensions.get('window');
 export const HomePage = props => {
+  
+  const PendingOrderStatus = useSelector(state => state.PendingOrder);
   const CancelledOrders = useSelector(state => state.CancelledOrders);
   const CancelledOrderDetails = useSelector(
     state => state.CancelledOrderDetails,
   );
-  console.log(CancelledOrderDetails, 'CancelledOrderDetails');
+  // console.log(CancelledOrderDetails, 'CancelledOrderDetails');
+  console.log(PendingOrderStatus, 'PendingOrderStatus');
   return (
     <ImageBackground
       source={require('../../Images/homePage/homebg.jpg')}
