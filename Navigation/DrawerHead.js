@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   ImageBackground,
@@ -7,16 +7,21 @@ import {
   Text,
   Dimensions,
   Modal,
+  TouchableOpacity,
 } from 'react-native';
 import {
   DrawerContentScrollView,
   DrawerItemList,
 } from '@react-navigation/drawer';
+import {useNavigation} from '@react-navigation/native';
 import SelectDropdown from 'react-native-select-dropdown';
+import {Drawer} from 'react-native-paper';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import {OrderForm} from '../Modules/OrderForm/OrderForm';
+import {DrawerActions} from '@react-navigation/native';
 
 const {width, height} = Dimensions.get('window');
 export const DrawerHead = props => {
-  const countries = ['Egypt', 'Canada', 'Australia', 'Ireland'];
   return (
     <DrawerContentScrollView {...props}>
       <View style={{flex: 1, height: height * 0.9, position: 'relative'}}>
@@ -26,23 +31,7 @@ export const DrawerHead = props => {
         <View>
           <DrawerItemList {...props} />
         </View>
-        <View>
-          <SelectDropdown
-            data={countries}
-            onSelect={(selectedItem, index) => {
-              console.log(selectedItem, index);
-            }}
-            buttonTextAfterSelection={(selectedItem, index) => {
-              return selectedItem
-            }}
-            rowTextForSelection={(item, index) => {
-              return item
-            }}
-          />
-        </View>
       </View>
     </DrawerContentScrollView>
   );
 };
-
-const styles = StyleSheet.create({});

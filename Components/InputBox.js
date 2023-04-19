@@ -14,6 +14,7 @@ export const InputBox = ({
   disabled,
   secureText,
   mode,
+  refff,
   styles,
   activeOutlineColor,
   placeholderTextColor,
@@ -30,6 +31,7 @@ export const InputBox = ({
       mode={mode}
       value={value}
       label={label}
+      ref={refff}
       placeholder={placeholder}
       right={right}
       keyboardType={keyboardType}

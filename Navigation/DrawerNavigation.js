@@ -1,24 +1,20 @@
 import React from 'react';
 import {createDrawerNavigator} from '@react-navigation/drawer';
-import {NavigationContainer} from '@react-navigation/native';
 import {AddShopDetailsForm} from '../Modules/AddShopDetails/AddShopDetailsForm';
 import {OrderForm} from '../Modules/OrderForm/OrderForm';
 import {HomePageStackNavigation} from './HomePageStackNavigation';
 import {DrawerHead} from './DrawerHead';
 import {Image} from 'react-native';
-import { ViewOrders } from '../Modules/ViewOrders/ViewOrders';
-import { OrderStackNavigation } from './OrderStackNavigation';
+import {ViewOrders} from '../Modules/ViewOrders/ViewOrders';
 
-const Drawer = createDrawerNavigator();
+const Drawers = createDrawerNavigator();
 
 export const DrawerNavigation = () => {
   return (
-    <Drawer.Navigator
+    <Drawers.Navigator
       drawerContent={props => <DrawerHead {...props} />}
-      screenOptions={{
-        headerShown: false,
-      }}>
-      <Drawer.Screen
+      screenOptions={{headerShown: false}}>
+      <Drawers.Screen
         name="Home"
         component={HomePageStackNavigation}
         options={{
@@ -39,7 +35,7 @@ export const DrawerNavigation = () => {
           },
         }}
       />
-      <Drawer.Screen
+      <Drawers.Screen
         name="Add Shop"
         component={AddShopDetailsForm}
         options={{
@@ -60,12 +56,12 @@ export const DrawerNavigation = () => {
           },
         }}
       />
-      <Drawer.Screen
+      <Drawers.Screen
         name="Take Order"
         component={OrderForm}
         options={{
           drawerIcon: () => (
-            <Image source={require('../Images/Drawer/order.png')}/>
+            <Image source={require('../Images/Drawer/order.png')} />
           ),
 
           drawerLabelStyle: {color: 'black'},
@@ -81,12 +77,12 @@ export const DrawerNavigation = () => {
           },
         }}
       />
-      <Drawer.Screen
+      <Drawers.Screen
         name="View Orders"
         component={ViewOrders}
         options={{
           drawerIcon: () => (
-            <Image source={require('../Images/Drawer/view.png')}/>
+            <Image source={require('../Images/Drawer/view.png')} />
           ),
 
           drawerLabelStyle: {color: 'black'},
@@ -102,6 +98,6 @@ export const DrawerNavigation = () => {
           },
         }}
       />
-    </Drawer.Navigator>
+    </Drawers.Navigator>
   );
 };

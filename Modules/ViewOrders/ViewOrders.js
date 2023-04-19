@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   Text,
   View,
@@ -21,6 +21,11 @@ import {Table, Row, Rows} from 'react-native-table-component';
 import {DeleteOrderDetails} from '../../Store/Action';
 import {NoOfOrdersCancelled} from '../../Store/Action';
 import {UpdateCancelOrder} from '../../Store/Action';
+import {DropdownComp} from '../../Components/Dropdown';
+import {ProductList} from '../Datas/OrderData';
+import {InputBox} from '../../Components/InputBox';
+import {ToastAndroid} from 'react-native';
+import {AddMoreOrder} from '../../Store/Action';
 
 const {width, height} = Dimensions.get('window');
 
@@ -38,23 +43,38 @@ export const ViewOrders = props => {
   const [cancelledShop, setCancelledShop] = useState(null);
   const [cancelledOrderId, setCancelledOrderId] = useState(null);
   const [modalData, setModalData] = useState();
-  const dispatch = useDispatch();
+  const [listofProducts, setListofProducts] = useState(ProductList);
+  const [index, setIndex] = useState(null);
+
+  // Add more Products
+  const [addedProduct, setAddedProduct] = useState(null);
+  const [addedVariant, setAddedVariant] = useState(null);
+  const [addedQuantity, setAddedQuantity] = useState(null);
+  const [tabledata, setTableData] = useState([]);
+  const [productCondition, setProductCondition] = useState(false);
+  const [variantCondition, setVariantCondition] = useState(false);
+  const [quantityCondition, setQuantityCondition] = useState(false);
+  const [shopListForAddMore, setShopListForAddMore] = useState();
+
+  const [overallAdded, setOverallAdded] = useState({});
+  const addVarientDropdownRef = useRef();
+  const addProductDropdownRef = useRef();
+  const addQuantityDropdownRef = useRef();
 
   const tableHeader = ['Product', 'Variant', 'Quantity'];
 
-  const tabledata = orderList.map(vals => {
-    const table = [];
-    // vals.product.map(vvv => {
-    //   table.push(vvv.selectedProduct, vvv.selectedVariant, vvv.Quantity);
-    // });
-    return table;
-  });
-  // console.log(tabledata, 'tabledata');
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    setOrderList(OrderDetails);
+    console.log('use effect check');
+  }, [OrderDetails]);
 
   const isFocused = useIsFocused();
   useEffect(() => {
     if (isFocused) {
       setChecked(null);
+      // setOrderList(OrderDetails)
     }
   }, [isFocused]);
 
@@ -75,7 +95,7 @@ export const ViewOrders = props => {
       return val.shop_name == shopName;
     });
     setShop(selectFilteredShop);
-    const selectedShopOrders = orderList.filter(
+    const selectedShopOrders = OrderDetails.filter(
       order => order.selected_shop == shopName,
     );
     setShopOrderDetails(selectedShopOrders);
@@ -84,7 +104,6 @@ export const ViewOrders = props => {
   };
   const handleCancelBtn = (orderNo, shop) => {
     setChecked(null);
-    console.log(orderNo, shop, 'btn pressed');
     const key = 0;
     const values = [{keys: key + 1, order_no: orderNo, shop: shop}];
     setModalData(values);
@@ -93,14 +112,15 @@ export const ViewOrders = props => {
     setCancelOrderNo(orderNo);
     setCancelModal(true);
   };
-  console.log(cancelOrderNo, 'cancelOrderNo');
-  console.log(cancelledShop, 'cancelledShop');
+  // console.log(cancelOrderNo, 'cancelOrderNo');
+  // console.log(cancelledShop, 'cancelledShop');
   const handleCancelOrder = () => {
     const values = {
       cancelled_shop: cancelledShop,
       cancelled_order_id: cancelledOrderId,
       reason: checked,
     };
+
     dispatch(DeleteOrderDetails(cancelOrderNo));
     dispatch(NoOfOrdersCancelled());
     dispatch(UpdateCancelOrder(values));
@@ -111,15 +131,80 @@ export const ViewOrders = props => {
     // console.log('Reason to Cancel Order :', checked);
   };
 
-  const handleAddMore = () => {
+  const handleAddMore = orderNo => {
     setAddModal(true);
+    const filterShop = orderList.filter(
+      orderrr => orderrr.order_number == orderNo,
+    );
+    setShopListForAddMore(filterShop);
+  };
+
+  const ProductNames = listofProducts.map(names => {
+    return names.product;
+  });
+
+  const VariantNames = listofProducts
+    .map(names => {
+      if (index == names.key) {
+        return names.variant.map(varient => {
+          return varient.type;
+        });
+      }
+    })
+    .filter(Boolean);
+
+  const handleProductSelection = (selectedItem, index) => {
+    setAddedProduct(selectedItem);
+    setIndex(index + 1);
+    setProductCondition(true);
+  };
+
+  const handleVariantSelection = (selectedItem, index) => {
+    setAddedVariant(selectedItem);
+    setVariantCondition(true);
+  };
+
+  const handleQuantityChange = qty => {
+    setAddedQuantity(qty);
+    setQuantityCondition(true);
+  };
+
+  const handleAddMoreBtn = () => {
+    const key = 1;
+    if (
+      productCondition == true &&
+      variantCondition == true &&
+      quantityCondition == true
+    ) {
+      addProductDropdownRef.current.reset();
+      addVarientDropdownRef.current.reset();
+      setTableData(pre => [
+        ...pre,
+        [addedProduct, addedVariant, addedQuantity],
+      ]);
+      setOverallAdded(pre => [
+        ...pre,
+        {key: key++, addedProduct, addedVariant, addedQuantity},
+      ]);
+      setAddedQuantity('');
+      setProductCondition(false);
+      setVariantCondition(false);
+      setQuantityCondition(false);
+    } else {
+      ToastAndroid.show('Fill the Reqiuired Fields', ToastAndroid.SHORT);
+    }
+  };
+
+  const handleAddMoreConfirm = () => {
+    dispatch(AddMoreOrder());
   };
 
   // console.log(orderList, 'redux data');
   // console.log(shopOrderDetails, 'shopOrderDetails');
-  console.log(OrderDetails, 'OrderDetails');
+  // console.log(OrderDetails, 'OrderDetails');
+  // console.log(OrderDetails, 'OrderDetails');
   // console.log(orderList, 'orderList');
-  // console.log(shop, 'shop data');
+
   if (OrderDetails == '') {
     return (
       <ScrollView
@@ -181,7 +266,7 @@ export const ViewOrders = props => {
               </View>
               <TouchableOpacity
                 style={styles.add}
-                onPress={() => handleAddMore()}>
+                onPress={() => handleAddMore(val.order_number)}>
                 <Text style={styles.addText}>Add</Text>
               </TouchableOpacity>
               <View style={styles.btnWrap}>
@@ -357,7 +442,7 @@ export const ViewOrders = props => {
                   </View>
                 </Modal>
               </View>
-              {/* Add modal */}
+              {/* Add More modal */}
               <View>
                 <Modal visible={addModal}>
                   <View style={styles.modalwrap}>
@@ -377,7 +462,117 @@ export const ViewOrders = props => {
                         Add More Products:
                       </Text>
                       <View>
-                        
+                        {shopListForAddMore?.map(addMore => (
+                          <View key={addMore.key}>
+                            <View style={styles.addTextWrap}>
+                              <Text style={styles.addText1}>
+                                Shop Name : {addMore.selected_shop}
+                              </Text>
+                              <Text style={styles.addText1}>
+                                Order Date : {addMore.order_date}
+                              </Text>
+                              <Text style={styles.addText1}>
+                                Order Number : {addMore.order_number}
+                              </Text>
+                            </View>
+                            <View>
+                              {addMore.product.map(() => (
+                                <View></View>
+                              ))}
+                            </View>
+                            <View style={styles.wrap}>
+                              <View style={styles.dropdownWrap}>
+                                <View style={styles.dropdown}>
+                                  <DropdownComp
+                                    data={ProductNames}
+                                    search={true}
+                                    defaultBtnText={'Select Product'}
+                                    searchPlaceHolder={'Search here...'}
+                                    searchPlaceHolderColor="#FF8400"
+                                    onselect={handleProductSelection}
+                                    dropdownRef={addProductDropdownRef}
+                                    buttonstyle={{
+                                      backgroundColor: '#FDF7C3',
+                                      width: width * 0.8,
+                                    }}
+                                    buttonTextStyle={{
+                                      letterSpacing: 2,
+                                    }}
+                                    rowstyle={{
+                                      backgroundColor: '#FDF7C3',
+                                    }}
+                                  />
+                                </View>
+                                <View style={styles.dropdown}>
+                                  <DropdownComp
+                                    data={VariantNames[0]}
+                                    search={true}
+                                    defaultBtnText={'Select Variant'}
+                                    searchPlaceHolder={'Search here...'}
+                                    searchPlaceHolderColor="#FF8400"
+                                    onselect={handleVariantSelection}
+                                    dropdownRef={addVarientDropdownRef}
+                                    buttonstyle={{
+                                      backgroundColor: '#FDF7C3',
+                                      width: width * 0.8,
+                                    }}
+                                    buttonTextStyle={{
+                                      letterSpacing: 2,
+                                    }}
+                                    rowstyle={{
+                                      backgroundColor: '#FDF7C3',
+                                    }}
+                                  />
+                                </View>
+                              </View>
+                              <View>
+                                <InputBox
+                                  styles={styles.Quantity}
+                                  mode={'outlined'}
+                                  label={'Quantity'}
+                                  placeholder={'Enter Quantity'}
+                                  keyboardType={'numeric'}
+                                  placeholderTextColor={'gray'}
+                                  value={addedQuantity}
+                                  onChangeText={handleQuantityChange}
+                                  refff={addQuantityDropdownRef}
+                                />
+                              </View>
+                              <View style={styles.addmoreBtnWrap}>
+                                <ButtonComp
+                                  style={styles.addmoreBtn}
+                                  mode={'elevated'}
+                                  text={'Add More'}
+                                  textColor={'white'}
+                                  onPress={handleAddMoreBtn}
+                                />
+                              </View>
+                            </View>
+                            <View style={styles.tablecontainer}>
+                              <Table borderStyle={styles.tableborder}>
+                                <Row
+                                  data={tableHeader}
+                                  style={styles.tableheader}
+                                  textStyle={{
+                                    textAlign: 'center',
+                                    fontWeight: 'bold',
+                                    color: 'black',
+                                  }}
+                                />
+                                <Rows data={tabledata} />
+                              </Table>
+                            </View>
+                            <View style={styles.addmoreBtnWrap}>
+                              <ButtonComp
+                                style={styles.addmoreBtn}
+                                mode={'elevated'}
+                                text={'Confirm'}
+                                textColor={'white'}
+                                onPress={handleAddMoreConfirm}
+                              />
+                            </View>
+                          </View>
+                        ))}
                       </View>
                     </ScrollView>
                   </View>
@@ -522,6 +717,8 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingTop: 30,
     backgroundColor: '#fff',
+    marginTop: 10,
+    marginBottom: 20,
   },
   tableborder: {
     borderWidth: 2,
@@ -567,7 +764,6 @@ const styles = StyleSheet.create({
   },
   radiogroup: {
     // backgroundColor:'red',
-
     marginBottom: 20,
   },
   cancelWrap: {
@@ -611,5 +807,50 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     paddingRight: 3,
     // transform: [{ rotate: '40deg' }],
+  },
+  addTextWrap: {
+    // backgroundColor: 'red',
+    height: 100,
+    marginTop: 10,
+    justifyContent: 'space-between',
+  },
+  addText1: {
+    fontSize: 16,
+    // fontWeight: 'bold',
+    marginVertical: 2,
+    color: 'black',
+    borderBottomColor: 'gray',
+    borderBottomWidth: 1,
+    marginHorizontal: 15,
+  },
+  dropdownWrap: {
+    // backgroundColor: 'red',
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  dropdown: {
+    marginHorizontal: 5,
+    marginVertical: 10,
+  },
+  Quantity: {
+    marginHorizontal: 35,
+    marginBottom: 30,
+  },
+  addmoreBtnWrap: {
+    // backgroundColor:"red",
+    alignItems: 'flex-end',
+    marginRight: 20,
+    marginBottom: 20,
+  },
+  addmoreBtn: {
+    backgroundColor: '#FF8400',
+  },
+  wrap: {
+    // backgroundColor: 'red',
+    marginHorizontal: 10,
+    marginVertical: 15,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'black',
   },
 });

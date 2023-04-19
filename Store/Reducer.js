@@ -7,7 +7,7 @@ import {
   CANCELLED_ORDERS,
   CANCELLED_ORDER_DETAILS,
   SET_PENDING_ORDER,
-  ADD_MORE_ORDER
+  ADD_MORE_ORDER,
 } from './Types';
 
 const InitialState = {
@@ -73,11 +73,14 @@ export const Reducer = (state = InitialState, action) => {
         ...state,
         OrderDetails: [
           ...state.OrderDetails,
-          {
-            selectedProduct: action.data.product,
-            selectedVariant: action.data.variant,
-            Quantity: action.data.quantity,
-          },
+          (product = [
+            ...product,
+            {
+              selectedProduct: action.data.product,
+              selectedVariant: action.data.variant,
+              Quantity: action.data.quantity,
+            },
+          ]),
         ],
       };
     default:
