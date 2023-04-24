@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Image,
   Modal,
+  TextInput,
   ToastAndroid,
 } from 'react-native';
 import {Table, Row, Rows} from 'react-native-table-component';
@@ -26,14 +27,16 @@ import {TableComp} from '../../Components/Table';
 import {COL_TYPES} from 'react-native-datatable-component';
 import {UpdateOrderDetails} from '../../Store/Action';
 import {useIsFocused} from '@react-navigation/native';
-import { SetPendingOrder } from '../../Store/Action';
-import { AddMoreOrder } from '../../Store/Action';
+import {SetPendingOrder} from '../../Store/Action';
+import {AddMoreOrder} from '../../Store/Action';
 
 const {width, height} = Dimensions.get('window');
 
 let Quantity;
 let count = 1;
 let key = 0;
+let productprice;
+let overallPrice;
 export const OrderForm = props => {
   const [selectedShop, setSelectedShop] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -50,6 +53,7 @@ export const OrderForm = props => {
   const ProductDropdownRef = useRef();
   const shopDropdownRef = useRef();
   const [products, setProducts] = useState([]);
+  const [totalPrice, setTotalPrice] = useState();
 
   const currentDate = new Date();
   const year = currentDate.getFullYear();
@@ -57,17 +61,9 @@ export const OrderForm = props => {
   const date = ('0' + currentDate.getDate()).slice(-2);
   const formattedDate = year + '/' + month + '/' + date;
 
-  // const PendingOrderStatus = useSelector(state => state.PendingOrder);
-
-  const colSettings = [
-    
-    {name: 'selectedProduct', type: COL_TYPES.STRING, width: '40%'},
-    {name: 'selectedVariant', type: COL_TYPES.STRING, width: '40%'},
-    {name: 'Quantity', type: COL_TYPES.INT, width: '20%'},
-  ];
-  const tableHeader = ['Product', 'Variant', 'Quantity'];
+  const tableHeader = ['Product', 'Variant', 'Quantity', 'Price'];
   const dispatch = useDispatch();
-  const colNames = ['selectedProduct', 'selectedVariant', 'Quantity'];
+  // const colNames = ['selectedProduct', 'selectedVariant', 'Quantity'];
 
   const handleShopSelection = (selectedItem, index) => {
     setSelectedShop(selectedItem);
@@ -79,7 +75,7 @@ export const OrderForm = props => {
     if (isFocused) {
       setSelectedShop(null);
       setAddOrder([]);
-      setProducts([])
+      setProducts([]);
     }
   }, [isFocused]);
 
@@ -96,6 +92,11 @@ export const OrderForm = props => {
 
   const onSubmit = formikprops => {
     formikprops.handleSubmit();
+    // const prod = ProductList.find(p => p.product === selectedProduct);
+    // const vari = prod.variant.find(v => v.type === selectedVariant);
+    // const MMMprice = Number(vari.price);
+    // const quantityAsNum = Number(Quantity);
+    // setEachPrice(MMMprice * quantityAsNum);
   };
 
   const handleConfirm = () => {
@@ -109,11 +110,12 @@ export const OrderForm = props => {
         order_date: formattedDate,
         selected_shop: selectedShop,
         product: products,
+        total_price: totalPrice,
         key: count++,
       };
-      console.log(key, 'keyyyyyy');
+      // console.log(key, 'keyyyyyy');
       setOrderNumber(orderNumber + 1);
-      // console.log(values, 'sending values to redux');
+
       dispatch(UpdateOrderDetails(values));
       dispatch(SetPendingOrder(orderNumber));
       // dispatch(AddMoreOrder('ppp','vvv',2))
@@ -141,7 +143,8 @@ export const OrderForm = props => {
 
   // console.log(addOrder, 'addOrder');
 
-  // console.log(products, 'products');
+  console.log(products, 'products');
+  console.log(totalPrice, 'totalPrice');
 
   return (
     <ScrollView
@@ -173,18 +176,31 @@ export const OrderForm = props => {
               addBtn2 == false
             ) {
               Quantity = value.quantity;
-
-              // setSelectedQuantity(value.quantity)
+              const prod = ProductList.find(p => p.product === selectedProduct);
+              const vari = prod.variant.find(v => v.type === selectedVariant);
+              const MMMprice = Number(vari.price);
+              const quantityAsNum = Number(Quantity);
+              productprice = MMMprice * quantityAsNum;
+              console.log(productprice, 'productprice');
+              // const overAllPrice = products.map(product => product.price);
+              // console.log(overAllPrice,'/////////')
+              // setTotalPrice(overAllPrice)
               setAddOrder(pre => [
                 ...pre,
-                [selectedProduct, selectedVariant, Quantity],
+                [selectedProduct, selectedVariant, Quantity, productprice],
                 // [orderNumber, selectedShop, formattedDate],
               ]);
 
               setProducts(
                 pre => [
                   ...pre,
-                  {key:key++, selectedProduct, selectedVariant, Quantity},
+                  {
+                    key: key++,
+                    selected_product: selectedProduct,
+                    selected_variant: selectedVariant,
+                    selected_quantity: Quantity,
+                    price: productprice,
+                  },
                 ],
                 // console.log(pre, 'preeeeeeeeeeeeee');
               );
@@ -336,6 +352,9 @@ export const OrderForm = props => {
                       formikprops.errors.quantity}
                   </Text>
                 </View>
+                <View>
+                  <TextInput placeholder="reref" style={{display: 'none'}} />
+                </View>
               </View>
               <View style={styles.btnholder}>
                 <ButtonComp
@@ -359,25 +378,11 @@ export const OrderForm = props => {
               </View> */}
               <View style={styles.tablecontainer}>
                 <Table borderStyle={styles.tableborder}>
-                  <Row
-                    data={tableHeader}
-                    style={styles.tableheader}
-                    textStyle={{
-                      textAlign: 'center',
-                      fontWeight: 'bold',
-                      color: 'black',
-                    }}
-                  />
+                  <Row data={tableHeader} style={styles.tableheader} />
                   <Rows data={addOrder} />
                 </Table>
               </View>
-              <View
-                style={styles.Confirmbtnholder}
-                textStyle={{
-                  textAlign: 'center',
-                  fontWeight: 'bold',
-                  color: 'black',
-                }}>
+              <View style={styles.Confirmbtnholder}>
                 <ButtonComp
                   mode={'elevated'}
                   text={'Confirm'}

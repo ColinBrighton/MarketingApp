@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   ToastAndroid,
   TouchableOpacity,
+  TextInput,
 } from 'react-native';
 import {ButtonComp} from '../../Components/Button';
 import {Formik} from 'formik';
@@ -56,7 +57,6 @@ export const AddShopDetailsForm = props => {
             shop_pincode: '',
             gst_number: '',
             shop_address: '',
-
           }}
           // validationSchema={ShopDetailsSchema}
           onSubmit={value => {
@@ -84,6 +84,7 @@ export const AddShopDetailsForm = props => {
                   onChangeText={formikprops.handleChange('shop_name')}
                   onBlur={formikprops.handleBlur('shop_name')}
                 />
+           
                 <Text style={styles.error}>
                   {formikprops.touched.shop_name &&
                     formikprops.errors.shop_name}

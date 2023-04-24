@@ -25,7 +25,7 @@ export const UpdateShopDetails = shopDetails => {
 };
 
 export const UpdateOrderDetails = orderDetails => {
-  console.log(orderDetails, 'Action');
+
   return {
     type: UPDATE_ORDER_DETAILS,
     data: orderDetails,

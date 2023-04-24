@@ -51,7 +51,7 @@ export const DrawerNavigation = () => {
           drawerItemStyle: {
             borderRadius: 15,
             paddingHorizontal: 5,
-            borderWidth: 1,
+            borderWidth: 1, 
             borderColor: 'black',
           },
         }}

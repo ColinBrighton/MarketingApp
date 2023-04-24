@@ -203,7 +203,7 @@ export const ViewOrders = props => {
   // console.log(shopOrderDetails, 'shopOrderDetails');
   // console.log(OrderDetails, 'OrderDetails');
   // console.log(OrderDetails, 'OrderDetails');
-  // console.log(orderList, 'orderList');
+  console.log(setShopListForAddMore, 'setShopListForAddMore');
 
   if (OrderDetails == '') {
     return (
@@ -257,7 +257,7 @@ export const ViewOrders = props => {
           />
         </View>
         <View>
-          {orderList.map(val => (
+          {orderList.map((val, index) => (
             <View style={styles.cardContainer} key={val.key}>
               <View style={styles.textWrap}>
                 <Text style={styles.text}>OrderID : {val.order_number}</Text>
@@ -266,6 +266,7 @@ export const ViewOrders = props => {
               </View>
               <TouchableOpacity
                 style={styles.add}
+                activeOpacity={0.7}
                 onPress={() => handleAddMore(val.order_number)}>
                 <Text style={styles.addText}>Add</Text>
               </TouchableOpacity>
@@ -353,13 +354,13 @@ export const ViewOrders = props => {
                             {qqq.product.map(rrr => (
                               <View style={styles.ordertextWrap} key={qqq.key}>
                                 <Text style={styles.ordertext}>
-                                  Product : {rrr.selectedProduct}
+                                  Product : {rrr.selected_product}
                                 </Text>
                                 <Text style={styles.ordertext}>
-                                  Variant : {rrr.selectedVariant}
+                                  Variant : {rrr.selected_variant}
                                 </Text>
                                 <Text style={styles.ordertext}>
-                                  Quantity : {rrr.Quantity}
+                                  Quantity : {rrr.selected_quantity}
                                 </Text>
                               </View>
                             ))}
@@ -416,14 +417,17 @@ export const ViewOrders = props => {
                             <RadioButton.Item
                               label="Reason 1"
                               value="Reason 1"
+                              color="orange"
                             />
                             <RadioButton.Item
                               label="Reason 2"
                               value="Reason 2"
+                              color="orange"
                             />
                             <RadioButton.Item
                               label="Reason 3"
                               value="Reason 3"
+                              color="orange"
                             />
                           </RadioButton.Group>
                         </View>
@@ -553,11 +557,11 @@ export const ViewOrders = props => {
                                 <Row
                                   data={tableHeader}
                                   style={styles.tableheader}
-                                  textStyle={{
-                                    textAlign: 'center',
-                                    fontWeight: 'bold',
-                                    color: 'black',
-                                  }}
+                                  // textStyle={{
+                                  //   textAlign: 'center',
+                                  //   fontWeight: 'bold',
+                                  //   color: 'black',
+                                  // }}
                                 />
                                 <Rows data={tabledata} />
                               </Table>
@@ -786,7 +790,7 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
   modaltext: {
-    color: 'black',
+    color: '#5A5A5A',
     marginLeft: 30,
   },
   add: {

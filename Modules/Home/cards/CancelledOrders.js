@@ -21,8 +21,8 @@ export const CancelledOrders = props => {
     state => state.CancelledOrderDetails,
   );
 
-  console.log(cancelledShop, 'cancelledShop');
-  console.log(orderList, 'orderList');
+  console.log(CancelledOrderDetails, 'CancelledOrderDetails');
+
   if (CancelledOrderDetails == '') {
     return (
       <ImageBackground
@@ -95,8 +95,8 @@ export const CancelledOrders = props => {
           </View>
           <Text style={styles.list}>List of cancelled Orders :</Text>
           <View style={{marginBottom: 20, marginTop: 10}}>
-            {CancelledOrderDetails.map(details => (
-              <View style={styles.cancelOrderWrap}>
+            {CancelledOrderDetails.map((details, index) => (
+              <View style={styles.cancelOrderWrap} key={index}>
                 <View style={styles.cancelorderHolder1}>
                   <Text style={styles.ordertext1}>
                     Order Id : {details.cancelled_order_id}
@@ -106,7 +106,7 @@ export const CancelledOrders = props => {
                   </Text>
                   <Text style={styles.ordertext1}>
                     Reason to Cancel : {details.reason}
-                  </Text> 
+                  </Text>
                 </View>
                 <View style={styles.cancelorderHolder2}>
                   <Image
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     borderWidth: 1,
     borderColor: 'black',
-    elevation:10
+    elevation: 10,
   },
   cancelorderHolder1: {
     // backgroundColor: 'red',
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
   },
   arrowImg: {
     opacity: 0.2,
-    transform: [{ rotate: '-15deg' }],
+    transform: [{rotate: '-15deg'}],
   },
   ordertext1: {
     fontSize: 16,

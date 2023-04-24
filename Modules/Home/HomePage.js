@@ -83,7 +83,7 @@ export const HomePage = props => {
                 source={require('../../Images/homePage/due.png')}
               />
             </View>
-            <Text style={styles.cardHead}>Due Amount</Text>
+            <Text style={styles.cardHead}>Payments</Text>
             <View style={styles.text}>
               <Text style={styles.text1}>10000</Text>
             </View>
@@ -93,7 +93,7 @@ export const HomePage = props => {
                 text={'View'}
                 style={styles.btn}
                 textColor={'black'}
-                onPress={() => props.navigation.navigate('DueAmount')}
+                onPress={() => props.navigation.navigate('PaymentDetails')}
               />
             </View>
           </View>

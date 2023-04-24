@@ -9,18 +9,19 @@ import {
   Modal,
   TouchableOpacity,
 } from 'react-native';
+
 import {
   DrawerContentScrollView,
   DrawerItemList,
 } from '@react-navigation/drawer';
 import {useNavigation} from '@react-navigation/native';
 import SelectDropdown from 'react-native-select-dropdown';
-import {Drawer} from 'react-native-paper';
+import {createDrawerNavigator} from '@react-navigation/drawer';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {OrderForm} from '../Modules/OrderForm/OrderForm';
-import {DrawerActions} from '@react-navigation/native';
 
 const {width, height} = Dimensions.get('window');
+
 export const DrawerHead = props => {
   return (
     <DrawerContentScrollView {...props}>
@@ -35,3 +36,7 @@ export const DrawerHead = props => {
     </DrawerContentScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+
+});
